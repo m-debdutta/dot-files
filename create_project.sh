@@ -1,45 +1,73 @@
 #! /bin/bash
 
 PROJECT_NAME=$1
-WORKING_DIRECTORY=/Users/debdutta/practice/js/work_space/$PROJECT_NAME
 
 # making directory structure.
+function makeDirectoryStructure() {
+  mkdir $PROJECT_NAME
+  mkdir $PROJECT_NAME/src 
+  mkdir $PROJECT_NAME/"test" 
+}
 
-mkdir $PROJECT_NAME
-mkdir $PROJECT_NAME/src 
-mkdir $PROJECT_NAME/"test" 
-mkdir $PROJECT_NAME/lib
+# creating necessary files.
 
-
-# making necessary files.
-
-touch $PROJECT_NAME/runtest.sh
-
-
-# copying test framework in test/testing.js directory.
-
-cp /Users/debdutta/bin/test_framework.js $PROJECT_NAME/lib/testing.js
-
+function creatFiles() {
+  touch $PROJECT_NAME/"test"/$PROJECT_NAME-test.js
+  touch $PROJECT_NAME/src/$PROJECT_NAME.js
+  touch $PROJECT_NAME/runTest.sh
+}
 
 # setting up "exports" and "require" and demo_test in test file.
 
-echo "const demoTest = require('../lib/testing.js');" >> $PROJECT_NAME/'test'/$PROJECT_NAME-test.js
-echo "const demoSrc = require('../src/$PROJECT_NAME.js');\n" >> $PROJECT_NAME/'test'/$PROJECT_NAME-test.js
+function test_framework() {
 
-echo "demoTest.assertEqual(1,demoSrc.checkExports(1),"One is equal to one.");" >> $PROJECT_NAME/'test'/$PROJECT_NAME-test.js
-echo "demoTest.assertEqual(1,demoSrc.checkExports(2),"Two is not-equal to one.");" >> $PROJECT_NAME/'test'/$PROJECT_NAME-test.js
-echo "demoTest.assertArrayEqual([2, 4, 6],demoSrc.checkExports([2, 4, 6]),"Set of even numbers should contain even numbers.");" >> $PROJECT_NAME/'test'/$PROJECT_NAME-test.js
-echo "demoTest.assertArrayEqual([2, 4, 6],demoSrc.checkExports([2, 4, 5]),"Set of even numbers should not contain odd numbers.");" >> $PROJECT_NAME/'test'/$PROJECT_NAME-test.js
+  echo "const {strictEqual, deepStrictEqual} = require('assert');
+  const {describe, it} = require('node:test');"
+
+}
+
+function runtest_framework () {
+
+  touch $PROJECT_NAME/runtest.sh
+  chmod +x $PROJECT_NAME/runtest.sh
+  echo "#! /bin/bash"
+  echo "node test/$PROJECT_NAME-test.js"
+
+}
+
+function ignore_files() {
+  echo "
+  *.swp 
+  .DC*
+  "
+}
+
+function go_to_project_directory () {
+  cd $PROJECT_NAME
+} 
+
+function setup_git () {
+  echo ""
+  git init
+  ignore_files >> .gitignore
+  git add .
+  git status
+
+}
 
 
-# copying demoProject.js in src/project.js
+function runtest () {
+  ./runtest.sh
+  echo ""
+}
 
-cp ~/bin/demo-project.js $PROJECT_NAME/src/$PROJECT_NAME.js
-
-
-# setting up automatic runtest.sh
-
-touch $PROJECT_NAME/runtest.sh
-chmod +x $PROJECT_NAME/runtest.sh
-echo "#! /bin/bash" >> $PROJECT_NAME/runtest.sh
-echo "autorun node vending-machine/test/test-vending-machine.js" >> $PROJECT_NAME/runtest.sh
+function main() {
+  makeDirectoryStructure
+  creatFiles
+  test_framework >> $PROJECT_NAME/'test'/$PROJECT_NAME-test.js
+  runtest_framework >> $PROJECT_NAME/runtest.sh 
+  go_to_project_directory 
+  runtest
+  setup_git
+}
+main

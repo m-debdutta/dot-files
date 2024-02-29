@@ -1,0 +1,41 @@
+#! /bin/bash
+
+# PATTERN1="" 
+# PATTERN2=""
+# PATTERN3=""
+# PATTERN4=""
+# PATTERN5=""
+# PATTERN6=""
+
+function auto_run() {
+  local COMMAND=$1
+  local FILE_NAME=/Users/debdutta/practice/js/work_space/$2
+  local LAST_MODIFIED_TIME=$(stat -f %m $FILE_NAME)
+  #local LAST_MODIFIED_TIME=$(ls -lT $FILE_NAME | cut -d" " -f12 | tr -d ":" )
+  while [ true ]
+  do
+    NEW_MODIFIED_TIME=$(stat -f %m $FILE_NAME)
+
+    #NEW_MODIFIED_TIME=$(ls -lT $FILE_NAME | cut -d" " -f12 | tr -d ":" )
+    if [ $LAST_MODIFIED_TIME -ne $NEW_MODIFIED_TIME ]
+    then
+      clear
+      LAST_MODIFIED_TIME=$NEW_MODIFIED_TIME
+      $COMMAND $FILE_NAME
+      echo -e "\n"
+      date
+      echo -e "\n"
+    fi
+#    for PAT in $PATTERN1 $PATTERN2 $PATTERN3 $PATTERN4 $PATTERN5 $PATTERN6
+#  do
+#    echo -en "\r ${PAT} Auto running $2..."
+#    sleep 0.2
+#  done
+#  echo -en "\033[?25h"
+    sleep 1
+
+  done
+}
+
+auto_run $1  $2
+
